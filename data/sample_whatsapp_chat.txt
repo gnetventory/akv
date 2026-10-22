@@ -1,0 +1,24 @@
+[10/01/2026, 09:15:22] +201012345678: Hello everyone! Welcome to the group.
+[10/01/2026, 09:20:10] Ahmed El-Kassas: Good morning all! Glad to connect with Egyptian startup founders.
+[10/01/2026, 09:25:44] Ahmed El-Kassas: Name: Ahmed El-Kassas
+Role: Founder & CEO
+Business: AgryVenture — IoT precision irrigation and farm sensor network for Egyptian olive and citrus farms
+Stage: Running
+Looking for: Series A AgTech investors, Senior Firmware Engineer
+Can help with: Farm hardware architecture, Nile Delta distribution channels
+Location: Tanta, Egypt
+WhatsApp: +201019876543
+LinkedIn: ahmed-elkassas-agry
+
+[10/01/2026, 10:02:11] Dina Mostafa: Name: Dina Mostafa
+Role: Co-Founder & CTO
+Business: MedPulse — AI radiology triage assistant reducing scan backlog in public hospitals
+Stage: Starting
+Looking for: Hospital clinical trials, Seed angels
+Can help with: Computer vision modeling, PyTorch, HIPAA compliance
+Location: Cairo, Egypt
+WhatsApp: +201123456789
+LinkedIn: dina-mostafa-medpulse
+
+[10/01/2026, 11:15:30] Karim Fahmy: Are we meeting next Tuesday for the mastermind coffee?
+[10/01/2026, 11:16:00] Dina Mostafa: Yes, 5 PM at Greek Campus.

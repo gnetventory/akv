@@ -1,0 +1,309 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Custom Properties ──────────────────────────────────────────────────── */
+:root {
+  --color-brand: #059669;
+  --color-accent: #f97316;
+  --color-canvas: #fafaf7;
+  --color-card: #ffffff;
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 6px 24px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    font-size: 16.5px;
+    scroll-behavior: smooth;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+  }
+
+  /* Prevent iOS Safari 16px auto-zoom on text inputs */
+  @media screen and (max-width: 767px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+  }
+
+  /* ── Warm Editorial Light Mode ─────────────────────────────────────────── */
+  body {
+    @apply bg-[#F8F9FA] text-stone-900 font-sans tracking-tight antialiased min-h-screen text-[15px] leading-normal;
+    background-image:
+      radial-gradient(at 10% 10%, rgba(254, 215, 170, 0.22) 0%, transparent 45%),
+      radial-gradient(at 90% 15%, rgba(254, 226, 226, 0.25) 0%, transparent 45%);
+    background-attachment: fixed;
+    transition: background-color 0.2s;
+  }
+
+  /* ── Dark Mode ────────────────────────────────────────────────────────── */
+  html.dark body {
+    @apply bg-stone-950 text-stone-100;
+    background-image:
+      radial-gradient(at 5% 5%, rgba(16, 185, 129, 0.07) 0%, transparent 45%),
+      radial-gradient(at 92% 15%, rgba(249, 115, 22, 0.06) 0%, transparent 45%);
+    background-attachment: fixed;
+  }
+
+  /* ── Display font ─────────────────────────────────────────────────────── */
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: 'Outfit', system-ui, sans-serif;
+    letter-spacing: -0.025em;
+  }
+
+  /* ── Custom scrollbar ─────────────────────────────────────────────────── */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-stone-300 dark:bg-stone-700 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-stone-400 dark:bg-stone-600;
+  }
+
+  /* ── Selection ────────────────────────────────────────────────────────── */
+  ::selection {
+    background: rgba(28, 25, 23, 0.15);
+  }
+}
+
+@layer components {
+  /* ── Modern Editorial Bento Cards ──────────────────────────────────────── */
+  .card {
+    @apply bg-white dark:bg-stone-900
+           border border-stone-200/80 dark:border-stone-800
+           rounded-2xl
+           shadow-sm hover:shadow-md
+           transition-all duration-200;
+  }
+
+  .card-anti-slop {
+    @apply bg-white dark:bg-stone-900
+           border border-stone-300/90 dark:border-stone-750
+           rounded-2xl
+           shadow-sm hover:shadow-md
+           transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply card cursor-pointer;
+  }
+  .card-hover:hover {
+    @apply -translate-y-0.5 border-stone-300 dark:border-stone-700 shadow-md;
+  }
+
+  /* ── Buttons (Editorial High-Craft) ────────────────────────────────────── */
+
+  /* Primary — Deep Obsidian Stone-900 */
+  .btn-primary {
+    @apply bg-stone-900 hover:bg-stone-800
+           text-white font-bold
+           px-4 py-2.5 rounded-xl
+           shadow-sm hover:shadow-md
+           transition-all duration-150
+           flex items-center justify-center gap-2 text-xs sm:text-sm
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Accent — Warm Amber / Terracotta */
+  .btn-accent {
+    @apply bg-amber-600 hover:bg-amber-700
+           text-white font-bold
+           px-4 py-2.5 rounded-xl
+           shadow-sm hover:shadow-md
+           transition-all duration-150
+           flex items-center justify-center gap-2 text-xs sm:text-sm
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Secondary — Crisp Stone Alabaster */
+  .btn-secondary {
+    @apply bg-white dark:bg-stone-800
+           hover:bg-stone-50 dark:hover:bg-stone-700
+           text-stone-800 dark:text-stone-100
+           font-bold px-4 py-2.5 rounded-xl
+           border border-stone-200/90 dark:border-stone-700
+           shadow-sm hover:shadow-md
+           transition-all duration-150
+           flex items-center justify-center gap-2 text-xs sm:text-sm;
+  }
+
+  /* Tactile / Neutral Dark Button */
+  .btn-tactile {
+    @apply bg-stone-900 dark:bg-stone-100
+           text-white dark:text-stone-950
+           hover:bg-black dark:hover:bg-white
+           font-bold px-4 py-2.5 rounded-xl
+           shadow-sm hover:shadow-md
+           transition-all duration-150
+           flex items-center justify-center gap-2 text-xs sm:text-sm;
+  }
+
+  /* WhatsApp Direct Action */
+  .btn-whatsapp {
+    @apply bg-[#25D366] hover:bg-[#20bd5a]
+           text-stone-950 font-bold
+           px-4 py-2 rounded-xl
+           border-[1.5px] border-emerald-900/60
+           shadow-tactile-sm dark:shadow-none
+           active:translate-x-[1px] active:translate-y-[1px]
+           transition-all duration-100
+           flex items-center justify-center gap-1.5 text-xs;
+  }
+
+  /* Ghost */
+  .btn-ghost {
+    @apply hover:bg-stone-100 dark:hover:bg-stone-800
+           text-stone-700 dark:text-stone-300
+           hover:text-stone-950 dark:hover:text-white
+           px-3.5 py-2 rounded-xl
+           transition-all duration-100
+           flex items-center gap-2 text-sm font-bold;
+  }
+
+  /* Danger */
+  .btn-danger {
+    @apply bg-rose-600 hover:bg-rose-700
+           active:translate-x-[1px] active:translate-y-[1px]
+           text-white font-bold
+           px-4 py-2.5 rounded-xl
+           border-[1.5px] border-rose-800
+           shadow-tactile-sm dark:shadow-none
+           transition-all duration-100
+           flex items-center justify-center gap-2 text-sm;
+  }
+
+  /* ── Inputs ───────────────────────────────────────────────────────────── */
+  .input {
+    @apply w-full
+           bg-white dark:bg-stone-900
+           border-[1.5px] border-stone-300 dark:border-stone-700
+           rounded-xl px-4 py-2.5
+           text-stone-950 dark:text-stone-50
+           text-[14.5px] font-medium
+           placeholder-stone-400 dark:placeholder-stone-500
+           focus:outline-none
+           focus:ring-2 focus:ring-orange-500/30
+           focus:border-orange-600 dark:focus:border-orange-500
+           shadow-sm
+           transition-all duration-100;
+  }
+
+  .label {
+    @apply block text-[11px] font-bold uppercase tracking-wider
+           text-stone-500 dark:text-stone-400 mb-1.5;
+  }
+
+  /* ── Badges ───────────────────────────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center gap-1.5
+           px-2.5 py-0.5 rounded-full
+           text-[12px] font-bold
+           transition-all;
+  }
+
+  /* ── Orange highlight pill (use for "new", "trending", etc.) ──────────── */
+  .pill-accent {
+    @apply inline-flex items-center gap-1
+           px-3 py-1 rounded-full
+           bg-orange-50 dark:bg-orange-900/20
+           text-orange-700 dark:text-orange-400
+           border border-orange-200 dark:border-orange-700/40
+           text-[12px] font-bold;
+  }
+
+  /* ── Muted text helper ────────────────────────────────────────────────── */
+  .text-muted {
+    @apply text-stone-500 dark:text-stone-400;
+  }
+
+  /* ── Section header with orange left accent bar ─────────────────────── */
+  .section-title {
+    @apply font-extrabold text-base text-stone-900 dark:text-stone-100
+           uppercase tracking-wider
+           flex items-center gap-2
+           pl-3 relative;
+  }
+  .section-title::before {
+    content: '';
+    @apply absolute left-0 top-0.5 bottom-0.5 w-[3px] rounded-full bg-orange-500;
+  }
+
+  /* ── Stat card accent variants ──────────────────────────────────────── */
+  .stat-card-emerald {
+    @apply card p-5 border-l-[3px] border-l-emerald-500;
+  }
+  .stat-card-orange {
+    @apply card p-5 border-l-[3px] border-l-orange-500;
+  }
+  .stat-card-blue {
+    @apply card p-5 border-l-[3px] border-l-blue-500;
+  }
+  .stat-card-violet {
+    @apply card p-5 border-l-[3px] border-l-violet-500;
+  }
+
+  /* ── Skeleton loader ─────────────────────────────────────────────────── */
+  .skeleton {
+    @apply rounded-lg bg-stone-200 dark:bg-stone-800;
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s infinite linear;
+  }
+
+  html.dark .skeleton {
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.07) 50%,
+      transparent 100%
+    );
+  }
+}
+
+/* ─── Utility overrides ──────────────────────────────────────────────────────── */
+@layer utilities {
+  .border-accent-left {
+    border-left: 3px solid var(--color-accent);
+  }
+  .border-brand-left {
+    border-left: 3px solid var(--color-brand);
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .bg-canvas {
+    background-color: var(--color-canvas);
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .safe-area-bottom {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+  }
+}

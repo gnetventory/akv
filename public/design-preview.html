@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Entrepreneurs Directory — Glass-Bento UI Preview (Option D + F Hybrid)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            display: ['Outfit', 'system-ui', 'sans-serif'],
+            serif: ['Fraunces', 'Georgia', 'serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            },
+            accent: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              500: '#f97316',
+              600: '#ea580c',
+            },
+          },
+          boxShadow: {
+            'glass-glow': '0 8px 32px 0 rgba(16, 185, 129, 0.14), 0 2px 8px 0 rgba(0,0,0,0.04)',
+            'glass-glow-hover': '0 12px 40px 0 rgba(16, 185, 129, 0.22), 0 4px 12px 0 rgba(0,0,0,0.06)',
+            'bento-tile': 'inset 0 1px 2px 0 rgba(255, 255, 255, 0.6), 0 1px 3px 0 rgba(0, 0, 0, 0.04)',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* Ambient Glow & Acrylic Glass */
+    .glass-acrylic {
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .dark .glass-acrylic {
+      background: rgba(24, 24, 27, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .glass-tile {
+      background: rgba(248, 250, 252, 0.75);
+      backdrop-filter: blur(8px);
+    }
+    .dark .glass-tile {
+      background: rgba(39, 39, 42, 0.65);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Alignment Grid Guide Overlay */
+    .show-guides .guide-col {
+      outline: 1.5px dashed rgba(16, 185, 129, 0.5) !important;
+      background: rgba(16, 185, 129, 0.03) !important;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .dark .custom-scroll::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-emerald-50/30 to-teal-50/40 dark:from-stone-950 dark:via-stone-900 dark:to-emerald-950/20 text-slate-900 dark:text-stone-100 min-h-screen antialiased transition-colors duration-200 selection:bg-emerald-500 selection:text-white">
+
+  <!-- Ambient Glow Blobs in Background -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10 opacity-70 dark:opacity-40">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/3 -right-40 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-purple-400/15 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- Top Sticky Navigation & Protocol Bar -->
+  <header class="sticky top-0 z-50 glass-acrylic border-b border-emerald-100 dark:border-stone-800 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Status -->
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-emerald-400 flex items-center justify-center text-white font-bold shadow-md shadow-emerald-500/25">
+          SE
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-bold text-base tracking-tight text-slate-900 dark:text-white">Smart Entrepreneurs Directory</span>
+            <span class="px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded-full">
+              D + F Glass-Bento
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Frosted Acrylic Glassmorphism + Modular Bento Grid Architecture</p>
+        </div>
+      </div>
+
+      <!-- Navigation & Utility Toggles -->
+      <div class="flex items-center gap-2.5">
+        <button onclick="toggleGuides()" id="guideToggle" class="px-3 py-1.5 text-xs font-mono font-medium rounded-xl border border-emerald-200 dark:border-stone-700 bg-white/80 dark:bg-stone-800 text-slate-700 dark:text-stone-300 hover:bg-emerald-50 transition flex items-center gap-1.5 shadow-xs" title="Toggle Alignment Guides">
+          <span>📏</span> <span class="hidden md:inline">Grid Guides</span>
+        </button>
+        <button onclick="toggleTheme()" class="p-2 text-xs rounded-xl border border-emerald-200 dark:border-stone-700 bg-white/80 dark:bg-stone-800 text-slate-700 dark:text-stone-300 hover:bg-emerald-50 transition shadow-xs" title="Toggle Dark/Light Mode">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Final Confirmation Banner -->
+  <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white px-4 py-3.5 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-sm">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">💎</span>
+        <div>
+          <span class="font-bold tracking-wide uppercase text-xs bg-black/25 px-2 py-0.5 rounded-md mr-1.5 font-mono">Chosen Direction</span>
+          <span><strong>Option D (Glassmorphism Emerald Glow) + Option F (Modular Bento Grid)</strong></span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <span class="text-xs font-medium text-emerald-100">Ready to build React components!</span>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- ========================================================================= -->
+    <!-- GLASS-BENTO HERO: Interactive Search, Preset Chips & View Toggles -->
+    <!-- ========================================================================= -->
+    <section class="glass-acrylic rounded-3xl p-6 border border-emerald-100/80 dark:border-stone-800 shadow-glass-glow space-y-4">
+      
+      <!-- Search Input Bar & View Toggles -->
+      <div class="flex flex-col lg:flex-row items-center gap-3">
+        
+        <!-- Search Input -->
+        <div class="relative flex-1 w-full">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-emerald-600 dark:text-emerald-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </span>
+          <input 
+            type="text" 
+            placeholder="Search founders, skills, cities, or needs (e.g. 'English academy', 'growth consulting', 'Dubai')..." 
+            class="w-full pl-10 pr-20 py-3 text-xs bg-white/80 dark:bg-stone-800/80 border border-emerald-200/80 dark:border-stone-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white placeholder:text-slate-400 font-medium transition"
+          />
+          <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[10px] font-mono text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded-md my-auto h-6 border border-emerald-200/60">
+            ⌘K Search
+          </span>
+        </div>
+
+        <!-- Stage Segment Filter -->
+        <div class="flex items-center p-1 bg-emerald-50/60 dark:bg-stone-800 rounded-2xl border border-emerald-200/60 dark:border-stone-700 text-xs font-medium shrink-0 overflow-x-auto custom-scroll">
+          <button class="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-semibold shadow-xs transition">All (124)</button>
+          <button class="px-3.5 py-1.5 rounded-xl text-slate-600 dark:text-stone-300 hover:text-emerald-600 transition">🌱 Starting (42)</button>
+          <button class="px-3.5 py-1.5 rounded-xl text-slate-600 dark:text-stone-300 hover:text-emerald-600 transition">⚡ Running (58)</button>
+          <button class="px-3.5 py-1.5 rounded-xl text-slate-600 dark:text-stone-300 hover:text-emerald-600 transition">🔥 Scaling (24)</button>
+        </div>
+
+        <!-- View Mode Toggle -->
+        <div class="flex items-center gap-1 bg-white/80 dark:bg-stone-800 p-1 rounded-2xl border border-emerald-200/60 dark:border-stone-700 shrink-0">
+          <button class="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 shadow-xs" title="Bento Grid">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+          </button>
+          <button class="p-2 rounded-xl text-slate-400 hover:text-emerald-600 transition" title="Compact Table">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Secondary Filter Chips & Preset Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-emerald-100/60 dark:border-stone-800 text-xs">
+        <div class="flex items-center gap-1.5 overflow-x-auto custom-scroll pb-1">
+          <span class="text-[11px] font-mono text-emerald-800 dark:text-emerald-400 font-semibold uppercase mr-1">Smart Filters:</span>
+          <button class="px-3 py-1 rounded-xl text-[11px] bg-gradient-to-r from-emerald-500/15 to-teal-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-semibold shadow-2xs hover:bg-emerald-50 transition">✨ 90%+ Synergy Score</button>
+          <button class="px-3 py-1 rounded-xl text-[11px] bg-white/80 dark:bg-stone-800 text-slate-700 dark:text-stone-300 border border-emerald-100 dark:border-stone-700 hover:border-emerald-400 hover:text-emerald-700 transition">🤝 Seeking Co-Founders</button>
+          <button class="px-3 py-1 rounded-xl text-[11px] bg-white/80 dark:bg-stone-800 text-slate-700 dark:text-stone-300 border border-emerald-100 dark:border-stone-700 hover:border-emerald-400 hover:text-emerald-700 transition">🇪🇬 Cairo Hub (82)</button>
+          <button class="px-3 py-1 rounded-xl text-[11px] bg-white/80 dark:bg-stone-800 text-slate-700 dark:text-stone-300 border border-emerald-100 dark:border-stone-700 hover:border-emerald-400 hover:text-emerald-700 transition">📦 Export & Trade (28)</button>
+          <button class="px-3 py-1 rounded-xl text-[11px] bg-white/80 dark:bg-stone-800 text-slate-700 dark:text-stone-300 border border-emerald-100 dark:border-stone-700 hover:border-emerald-400 hover:text-emerald-700 transition">⭐ Saved Watchlist</button>
+        </div>
+        <span class="text-[11px] font-mono text-emerald-700 dark:text-emerald-400">Showing 4 of 124 profiles</span>
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- GLASS-BENTO 3-COLUMN RESPONSIVE MEMBER CARDS GRID -->
+    <!-- ========================================================================= -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- ========================================== -->
+      <!-- CARD 1: Molly (English Educator & Academy) -->
+      <!-- ========================================== -->
+      <div class="guide-col glass-acrylic rounded-3xl border border-emerald-200/80 dark:border-emerald-800/50 p-6 shadow-glass-glow hover:shadow-glass-glow-hover hover:border-emerald-400 transition-all duration-200 flex flex-col justify-between group">
+        
+        <div class="space-y-4">
+          
+          <!-- Card Header: Avatar, Name, Location & Synergy Dial -->
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-3.5">
+              <div class="relative">
+                <div class="h-13 w-13 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-amber-400 p-0.5 shadow-md shadow-emerald-500/20">
+                  <div class="h-12 w-12 rounded-2xl bg-white dark:bg-stone-900 flex items-center justify-center font-display font-black text-emerald-700 dark:text-emerald-300 text-lg">
+                    M
+                  </div>
+                </div>
+                <!-- Active status dot -->
+                <span class="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-stone-900" title="Active Community Member"></span>
+              </div>
+
+              <div>
+                <h3 class="font-display font-bold text-lg text-slate-900 dark:text-white flex items-center gap-1.5 leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+                  Molly
+                  <span class="text-sm" title="Egypt">🇪🇬</span>
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-sans mt-0.5 line-clamp-1">English Language Educator & Academy Founder</p>
+                <span class="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded-md mt-1 inline-block border border-emerald-200/60">
+                  📍 Cairo, Egypt
+                </span>
+              </div>
+            </div>
+
+            <!-- Synergy Dial Bento Badge -->
+            <div class="flex flex-col items-end shrink-0">
+              <div class="flex items-center gap-1 bg-gradient-to-r from-emerald-500/15 to-teal-500/15 dark:bg-emerald-950/80 px-2.5 py-1 rounded-xl border border-emerald-300/80 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300">
+                <span class="text-xs font-mono font-bold">94%</span>
+                <span class="text-[10px] uppercase font-mono text-emerald-600">Match</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento Sub-Tile Grid -->
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            
+            <!-- Venture Micro-Tile -->
+            <div class="glass-tile p-3 rounded-2xl border border-slate-200/80 dark:border-stone-800 flex flex-col justify-between">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1">VENTURE</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug">
+                Online English Academy & Language Content Creation
+              </span>
+            </div>
+
+            <!-- Stage Micro-Tile -->
+            <div class="glass-tile p-3 rounded-2xl border border-slate-200/80 dark:border-stone-800 flex flex-col justify-between">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1">VENTURE STAGE</span>
+              <div class="flex items-center gap-1.5">
+                <span class="h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
+                <span class="font-bold text-blue-700 dark:text-blue-300 text-xs">🌱 Starting</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bento Needs & Offers Block -->
+          <div class="space-y-2">
+            <!-- Looking for -->
+            <div class="glass-tile p-2.5 rounded-2xl border border-amber-200/70 dark:border-amber-900/60 bg-amber-50/40 dark:bg-amber-950/20 text-xs">
+              <div class="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-amber-800 dark:text-amber-400 mb-0.5">
+                <span>🎯</span> <span>LOOKING FOR:</span>
+              </div>
+              <p class="text-[11px] text-slate-700 dark:text-slate-200 line-clamp-2 leading-relaxed">
+                تكبير وتطوير الأكاديمية الأونلاين والتوسع في الكورسات والشراكات التعليمية.
+              </p>
+            </div>
+
+            <!-- Can help with -->
+            <div class="glass-tile p-2.5 rounded-2xl border border-emerald-200/70 dark:border-emerald-900/60 bg-emerald-50/40 dark:bg-emerald-950/20 text-xs">
+              <div class="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-emerald-800 dark:text-emerald-400 mb-0.5">
+                <span>💡</span> <span>CAN HELP WITH:</span>
+              </div>
+              <p class="text-[11px] text-slate-700 dark:text-slate-200 line-clamp-2 leading-relaxed">
+                تدريس كورسات لغة إنجليزية (Adults & Kids)، صناعة محتوى تعليمي، وإرشادات التخييم والسفر داخل مصر.
+              </p>
+            </div>
+          </div>
+
+          <!-- Industry Tag Pills -->
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <span class="text-[10px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2.5 py-0.5 rounded-lg border border-emerald-200/60">Education</span>
+            <span class="text-[10px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2.5 py-0.5 rounded-lg border border-emerald-200/60">EdTech</span>
+            <span class="text-[10px] font-mono font-semibold bg-slate-100 dark:bg-stone-800 text-slate-600 dark:text-stone-300 px-2.5 py-0.5 rounded-lg border border-slate-200 dark:border-stone-700">+3 more</span>
+          </div>
+
+        </div>
+
+        <!-- Aligned Action Footer Toolbar -->
+        <div class="pt-4 mt-4 border-t border-emerald-100/80 dark:border-stone-800 flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <button class="p-2 rounded-xl bg-white dark:bg-stone-800 hover:bg-emerald-50 dark:hover:bg-stone-700 text-slate-500 hover:text-emerald-600 border border-emerald-100 dark:border-stone-700 transition shadow-2xs" title="Message on WhatsApp">
+              💬
+            </button>
+            <button class="p-2 rounded-xl bg-white dark:bg-stone-800 hover:bg-blue-50 dark:hover:bg-stone-700 text-slate-500 hover:text-blue-600 border border-emerald-100 dark:border-stone-700 transition shadow-2xs" title="View TikTok/Website">
+              🔗
+            </button>
+            <button class="p-2 rounded-xl bg-white dark:bg-stone-800 hover:bg-amber-50 dark:hover:bg-stone-700 text-slate-500 hover:text-amber-500 border border-emerald-100 dark:border-stone-700 transition shadow-2xs" title="Bookmark to Watchlist">
+              ⭐
+            </button>
+          </div>
+
+          <button class="px-4 py-2 text-xs font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl shadow-md shadow-emerald-600/20 hover:shadow-lg transition flex items-center gap-1.5">
+            <span>View Details</span> &rarr;
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- CARD 2: Mohamed Meseilhy (Phoenix Growth) -->
+      <!-- ========================================== -->
+      <div class="guide-col glass-acrylic rounded-3xl border border-emerald-200/80 dark:border-emerald-800/50 p-6 shadow-glass-glow hover:shadow-glass-glow-hover hover:border-emerald-400 transition-all duration-200 flex flex-col justify-between group">
+        
+        <div class="space-y-4">
+          
+          <!-- Card Header -->
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-3.5">
+              <div class="relative">
+                <div class="h-13 w-13 rounded-2xl bg-gradient-to-tr from-indigo-600 via-teal-500 to-emerald-400 p-0.5 shadow-md shadow-indigo-500/20">
+                  <div class="h-12 w-12 rounded-2xl bg-white dark:bg-stone-900 flex items-center justify-center font-display font-black text-indigo-700 dark:text-indigo-300 text-base">
+                    MM
+                  </div>
+                </div>
+                <span class="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-stone-900" title="Active"></span>
+              </div>
+
+              <div>
+                <h3 class="font-display font-bold text-lg text-slate-900 dark:text-white flex items-center gap-1.5 leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+                  محمد مصيلحي
+                  <span class="text-sm" title="Egypt">🇪🇬</span>
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-sans mt-0.5 line-clamp-1">Founder of Phoenix Growth Partners & Consultant</p>
+                <span class="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded-md mt-1 inline-block border border-emerald-200/60">
+                  📍 Cairo, Egypt
+                </span>
+              </div>
+            </div>
+
+            <!-- Synergy Dial -->
+            <div class="flex flex-col items-end shrink-0">
+              <div class="flex items-center gap-1 bg-gradient-to-r from-emerald-500/15 to-teal-500/15 dark:bg-emerald-950/80 px-2.5 py-1 rounded-xl border border-emerald-300/80 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300">
+                <span class="text-xs font-mono font-bold">98%</span>
+                <span class="text-[10px] uppercase font-mono text-emerald-600">Match</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento Sub-Tile Grid -->
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            
+            <div class="glass-tile p-3 rounded-2xl border border-slate-200/80 dark:border-stone-800 flex flex-col justify-between">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1">VENTURE</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug">
+                Phoenix Growth Partners — Commercial Infrastructure
+              </span>
+            </div>
+
+            <div class="glass-tile p-3 rounded-2xl border border-slate-200/80 dark:border-stone-800 flex flex-col justify-between">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1">VENTURE STAGE</span>
+              <div class="flex items-center gap-1.5">
+                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="font-bold text-emerald-700 dark:text-emerald-300 text-xs">⚡ Running</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bento Needs & Offers Block -->
+          <div class="space-y-2">
+            <div class="glass-tile p-2.5 rounded-2xl border border-amber-200/70 dark:border-amber-900/60 bg-amber-50/40 dark:bg-amber-950/20 text-xs">
+              <div class="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-amber-800 dark:text-amber-400 mb-0.5">
+                <span>🎯</span> <span>LOOKING FOR:</span>
+              </div>
+              <p class="text-[11px] text-slate-700 dark:text-slate-200 line-clamp-2 leading-relaxed">
+                اقتراحات شراكة استراتيجية، فرص تعاون وتوسيع شبكة الأعمال في تطوير وتنمية الشركات.
+              </p>
+            </div>
+
+            <div class="glass-tile p-2.5 rounded-2xl border border-emerald-200/70 dark:border-emerald-900/60 bg-emerald-50/40 dark:bg-emerald-950/20 text-xs">
+              <div class="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-emerald-800 dark:text-emerald-400 mb-0.5">
+                <span>💡</span> <span>CAN HELP WITH:</span>
+              </div>
+              <p class="text-[11px] text-slate-700 dark:text-slate-200 line-clamp-2 leading-relaxed">
+                استشارات تنمية وتطوير الأعمال، حل مشاكل Growth Ceiling، وبناء البنية التجارية حتى الاستثمار.
+              </p>
+            </div>
+          </div>
+
+          <!-- Industry Tag Pills -->
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <span class="text-[10px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2.5 py-0.5 rounded-lg border border-emerald-200/60">Business Consulting</span>
+            <span class="text-[10px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2.5 py-0.5 rounded-lg border border-emerald-200/60">Growth Strategy</span>
+            <span class="text-[10px] font-mono font-semibold bg-slate-100 dark:bg-stone-800 text-slate-600 dark:text-stone-300 px-2.5 py-0.5 rounded-lg border border-slate-200 dark:border-stone-700">+2 more</span>
+          </div>
+
+        </div>
+
+        <!-- Aligned Action Footer Toolbar -->
+        <div class="pt-4 mt-4 border-t border-emerald-100/80 dark:border-stone-800 flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <button class="p-2 rounded-xl bg-white dark:bg-stone-800 hover:bg-emerald-50 dark:hover:bg-stone-700 text-slate-500 hover:text-emerald-600 border border-emerald-100 dark:border-stone-700 transition shadow-2xs" title="Message on WhatsApp">
+              💬
+            </button>
+            <button class="p-2 rounded-xl bg-white dark:bg-stone-800 hover:bg-blue-50 dark:hover:bg-stone-700 text-slate-500 hover:text-blue-600 border border-emerald-100 dark:border-stone-700 transition shadow-2xs" title="LinkedIn Profile">
+              <span class="font-bold text-xs">in</span>
+            </button>
+            <button class="p-2 rounded-xl bg-white dark:bg-stone-800 hover:bg-amber-50 dark:hover:bg-stone-700 text-slate-500 hover:text-amber-500 border border-emerald-100 dark:border-stone-700 transition shadow-2xs" title="Bookmark to Watchlist">
+              ⭐
+            </button>
+          </div>
+
+          <button class="px-4 py-2 text-xs font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl shadow-md shadow-emerald-600/20 hover:shadow-lg transition flex items-center gap-1.5">
+            <span>View Details</span> &rarr;
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- CARD 3: Dr. Tarek Amin (BioAI Diagnostics) -->
+      <!-- ========================================== -->
+      <div class="guide-col glass-acrylic rounded-3xl border border-emerald-200/80 dark:border-emerald-800/50 p-6 shadow-glass-glow hover:shadow-glass-glow-hover hover:border-emerald-400 transition-all duration-200 flex flex-col justify-between group">
+        
+        <div class="space-y-4">
+          
+          <!-- Card Header -->
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-3.5">
+              <div class="relative">
+                <div class="h-13 w-13 rounded-2xl bg-gradient-to-tr from-teal-500 via-cyan-500 to-emerald-400 p-0.5 shadow-md shadow-teal-500/20">
+                  <div class="h-12 w-12 rounded-2xl bg-white dark:bg-stone-900 flex items-center justify-center font-display font-black text-teal-700 dark:text-teal-300 text-base">
+                    TA
+                  </div>
+                </div>
+                <span class="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-stone-900" title="Active"></span>
+              </div>
+
+              <div>
+                <h3 class="font-display font-bold text-lg text-slate-900 dark:text-white flex items-center gap-1.5 leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+                  Dr. Tarek Amin
+                  <span class="text-sm" title="UAE">🇦🇪</span>
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-sans mt-0.5 line-clamp-1">BioAI Diagnostics Group Founder & Clinical Advisor</p>
+                <span class="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded-md mt-1 inline-block border border-emerald-200/60">
+                  📍 Dubai, UAE
+                </span>
+              </div>
+            </div>
+
+            <!-- Synergy Dial -->
+            <div class="flex flex-col items-end shrink-0">
+              <div class="flex items-center gap-1 bg-gradient-to-r from-emerald-500/15 to-teal-500/15 dark:bg-emerald-950/80 px-2.5 py-1 rounded-xl border border-emerald-300/80 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300">
+                <span class="text-xs font-mono font-bold">91%</span>
+                <span class="text-[10px] uppercase font-mono text-emerald-600">Match</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento Sub-Tile Grid -->
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            
+            <div class="glass-tile p-3 rounded-2xl border border-slate-200/80 dark:border-stone-800 flex flex-col justify-between">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1">VENTURE</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug">
+                AI Diagnostic Radiology for MENA Hospital Networks
+              </span>
+            </div>
+
+            <div class="glass-tile p-3 rounded-2xl border border-slate-200/80 dark:border-stone-800 flex flex-col justify-between">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block mb-1">VENTURE STAGE</span>
+              <div class="flex items-center gap-1.5">
+                <span class="h-2 w-2 rounded-full bg-purple-500 animate-pulse"></span>
+                <span class="font-bold text-purple-700 dark:text-purple-300 text-xs">🔥 Scaling</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bento Needs & Offers Block -->
+          <div class="space-y-2">
+            <div class="glass-tile p-2.5 rounded-2xl border border-amber-200/70 dark:border-amber-900/60 bg-amber-50/40 dark:bg-amber-950/20 text-xs">
+              <div class="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-amber-800 dark:text-amber-400 mb-0.5">
+                <span>🎯</span> <span>LOOKING FOR:</span>
+              </div>
+              <p class="text-[11px] text-slate-700 dark:text-slate-200 line-clamp-2 leading-relaxed">
+                Hospital clinical trial partnerships in the Gulf & Series A co-lead syndication.
+              </p>
+            </div>
+
+            <div class="glass-tile p-2.5 rounded-2xl border border-emerald-200/70 dark:border-emerald-900/60 bg-emerald-50/40 dark:bg-emerald-950/20 text-xs">
+              <div class="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-emerald-800 dark:text-emerald-400 mb-0.5">
+                <span>💡</span> <span>CAN HELP WITH:</span>
+              </div>
+              <p class="text-[11px] text-slate-700 dark:text-slate-200 line-clamp-2 leading-relaxed">
+                Clinical ML architecture, medical device regulatory compliance, and MedTech scaling.
+              </p>
+            </div>
+          </div>
+
+          <!-- Industry Tag Pills -->
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <span class="text-[10px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2.5 py-0.5 rounded-lg border border-emerald-200/60">MedTech</span>
+            <span class="text-[10px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2.5 py-0.5 rounded-lg border border-emerald-200/60">Artificial Intelligence</span>
+            <span class="text-[10px] font-mono font-semibold bg-slate-100 dark:bg-stone-800 text-slate-600 dark:text-stone-300 px-2.5 py-0.5 rounded-lg border border-slate-200 dark:border-stone-700">+1 more</span>
+          </div>
+
+        </div>
+
+        <!-- Aligned Action Footer Toolbar -->
+        <div class="pt-4 mt-4 border-t border-emerald-100/80 dark:border-stone-800 flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <button class="p-2 rounded-xl bg-white dark:bg-stone-800 hover:bg-emerald-50 dark:hover:bg-stone-700 text-slate-500 hover:text-emerald-600 border border-emerald-100 dark:border-stone-700 transition shadow-2xs" title="Message on WhatsApp">
+              💬
+            </button>
+            <button class="p-2 rounded-xl bg-white dark:bg-stone-800 hover:bg-purple-50 dark:hover:bg-stone-700 text-slate-500 hover:text-purple-600 border border-emerald-100 dark:border-stone-700 transition shadow-2xs" title="Pitch Deck">
+              📊
+            </button>
+            <button class="p-2 rounded-xl bg-white dark:bg-stone-800 hover:bg-amber-50 dark:hover:bg-stone-700 text-slate-500 hover:text-amber-500 border border-emerald-100 dark:border-stone-700 transition shadow-2xs" title="Bookmark to Watchlist">
+              ⭐
+            </button>
+          </div>
+
+          <button class="px-4 py-2 text-xs font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl shadow-md shadow-emerald-600/20 hover:shadow-lg transition flex items-center gap-1.5">
+            <span>View Details</span> &rarr;
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    // Alignment guides toggle
+    function toggleGuides() {
+      document.body.classList.toggle('show-guides');
+      const btn = document.getElementById('guideToggle');
+      if (document.body.classList.contains('show-guides')) {
+        btn.classList.add('bg-emerald-100', 'text-emerald-800', 'border-emerald-400');
+      } else {
+        btn.classList.remove('bg-emerald-100', 'text-emerald-800', 'border-emerald-400');
+      }
+    }
+
+    // Dark/Light Theme toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "🛡️ [Git Pre-Commit Hook] Running Omni Verification Pipeline..."
+./scripts/verify.sh
