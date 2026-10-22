@@ -9,5 +9,5 @@ __pycache__/
 .pytest_cache/
 coverage/
 .agents/state/
-diagnostics.log
+dist/
 akv/
