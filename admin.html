@@ -2,13 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; url=/nia.html" />
-    <title>Redirecting to NIA Portal...</title>
-    <script>
-      window.location.replace('/nia.html');
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AKV Admin Portal</title>
+    <meta name="description" content="Admin portal for AKV Directory." />
+    <!-- Prevent indexing by search engines -->
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>" />
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
-  <body style="font-family: system-ui, sans-serif; padding: 2rem; text-align: center;">
-    <p>Redirecting to <a href="/nia.html">NIA Portal</a>...</p>
+  <body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/admin-main.jsx"></script>
   </body>
 </html>
