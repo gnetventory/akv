@@ -668,3 +668,24 @@ export function downloadVCardFile(member, includePhone = false) {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+
+// ─── Email Validation & Member Directory Verification ─────────────────────────
+export function isValidEmail(email = '') {
+  if (!email || typeof email !== 'string') return false;
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email.trim());
+}
+
+export function findMemberByEmail(email = '', members = []) {
+  if (!email || !isValidEmail(email) || !Array.isArray(members)) return null;
+  const clean = email.trim().toLowerCase();
+  return (
+    members.find((m) => {
+      if (!m) return false;
+      const mEmail = (m.email || '').trim().toLowerCase();
+      if (mEmail && mEmail === clean) return true;
+      if (m.originalText && m.originalText.toLowerCase().includes(clean)) return true;
+      return false;
+    }) || null
+  );
+}

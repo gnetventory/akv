@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, X, Check, ArrowRight, MessageSquareHeart } from 'lucide-react';
+import { Sparkles, X, Check, ArrowRight, MessageSquareHeart, AlertCircle, ShieldCheck } from 'lucide-react';
 import { SURVEY_QUESTIONS } from '../../utils/surveyQuestions';
 import { saveSurveyResponse, getSurveyResponses } from '../../utils/storage';
 import { pushSurveyToSheets } from '../../utils/sheetsSync';
 import { useApp } from '../../contexts/AppContext';
+import { isValidEmail, findMemberByEmail } from '../../utils/helpers';
 
 export default function PulseSurveyCard() {
-  const { language = 'en', notify } = useApp();
+  const { members = [], language = 'en', notify } = useApp();
   const isAr = language === 'ar';
 
   const [isOpen, setIsOpen] = useState(false);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [verifiedMember, setVerifiedMember] = useState(null);
   const [step, setStep] = useState('question'); // 'question' | 'verify' | 'ask_more' | 'finished'
   const [hasDismissed, setHasDismissed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,36 +32,66 @@ export default function PulseSurveyCard() {
         // All answered
         setHasDismissed(true);
       }
-      // Re-use saved email if exists
+      // Re-use saved email if exists & verified
       const lastWithEmail = saved.find((r) => r.email);
       if (lastWithEmail?.email) {
         setEmail(lastWithEmail.email);
+        const match = findMemberByEmail(lastWithEmail.email, members);
+        if (match) setVerifiedMember(match);
       }
     } catch {
       // ignore
     }
-  }, []);
+  }, [members]);
 
   const currentQ = SURVEY_QUESTIONS[currentIdx] || SURVEY_QUESTIONS[0];
 
   const handleSelectOption = (option) => {
     setSelectedOption(option);
-    // If email is already saved from previous session, skip directly to submit
-    if (email && email.includes('@')) {
-      handleSubmit(email, option);
+    setEmailError('');
+    // If email is already saved and verified in system, proceed
+    const match = findMemberByEmail(email, members);
+    if (match) {
+      setVerifiedMember(match);
+      handleSubmit(email, option, match);
     } else {
       setStep('verify');
     }
   };
 
-  const handleSubmit = async (submitEmail, option = selectedOption) => {
-    if (!submitEmail || !submitEmail.includes('@')) {
-      notify(isAr ? 'يرجى إدخال بريد إلكتروني صحيح' : 'Please enter a valid email', 'warning');
+  const handleSubmit = async (submitEmail, option = selectedOption, memberOverride = null) => {
+    const cleanEmail = (submitEmail || '').trim().toLowerCase();
+
+    // 1. Verify email format
+    if (!isValidEmail(cleanEmail)) {
+      setEmailError(
+        isAr
+          ? 'يرجى إدخال بريد إلكتروني صحيح بالصيغة (name@domain.com)'
+          : 'Please enter a valid email format (e.g. name@domain.com)'
+      );
       return;
     }
+
+    // 2. Verify email exists in community directory
+    const matchedMember = memberOverride || findMemberByEmail(cleanEmail, members);
+    if (!matchedMember) {
+      setEmailError(
+        isAr
+          ? 'هذا البريد غير مسجل في دليل المجتمع. يرجى إدخال البريد المسجل به حسابك.'
+          : 'This email was not found in our member directory. Please enter your registered email.'
+      );
+      return;
+    }
+
+    setEmailError('');
+    setVerifiedMember(matchedMember);
     setIsSubmitting(true);
+
     const payload = {
-      email: submitEmail.trim().toLowerCase(),
+      email: cleanEmail,
+      memberId: matchedMember.id,
+      memberName: matchedMember.name,
+      isVerifiedMember: true,
       questionId: currentQ.id,
       questionText: isAr ? currentQ.questionAr : currentQ.questionEn,
       answerId: option.id,
@@ -194,38 +227,63 @@ export default function PulseSurveyCard() {
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block">
                     {isAr
-                      ? 'أدخل بريدك الإلكتروني لتأكيد مشاركتك في المجتمع:'
-                      : 'Enter your email to verify your response & community badge:'}
+                      ? 'أدخل بريدك الإلكتروني المسجل في دليل المجتمع:'
+                      : 'Enter your registered member email:'}
                   </label>
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (emailError) setEmailError('');
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSubmit(email);
+                    }}
                     placeholder="founder@company.com"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-xs sm:text-sm focus:outline-emerald-500"
+                    className={`w-full px-3.5 py-2.5 rounded-xl border bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-xs sm:text-sm focus:outline-emerald-500 ${
+                      emailError ? 'border-rose-400 dark:border-rose-600 bg-rose-50/30' : 'border-stone-300 dark:border-stone-700'
+                    }`}
                     autoFocus
                   />
+                  {emailError && (
+                    <div className="flex items-start gap-1.5 pt-1 text-rose-600 dark:text-rose-400 text-xs font-medium">
+                      <AlertCircle size={14} className="shrink-0 mt-0.5" />
+                      <span>{emailError}</span>
+                    </div>
+                  )}
+                  {verifiedMember && !emailError && (
+                    <div className="flex items-center gap-1.5 pt-1 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
+                      <ShieldCheck size={14} className="shrink-0" />
+                      <span>
+                        {isAr ? `عضو موثق: ${verifiedMember.name}` : `Verified Member: ${verifiedMember.name}`}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center justify-between gap-2 pt-2">
                   <button
                     type="button"
-                    onClick={() => setStep('question')}
+                    onClick={() => {
+                      setEmailError('');
+                      setStep('question');
+                    }}
                     className="px-3.5 py-2 rounded-xl text-stone-500 hover:text-stone-800 dark:hover:text-stone-200 text-xs font-bold"
                   >
                     {isAr ? 'رجوع' : 'Back'}
                   </button>
                   <button
                     type="button"
-                    disabled={isSubmitting || !email.includes('@')}
+                    disabled={isSubmitting || !email.trim()}
                     onClick={() => handleSubmit(email)}
                     className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-extrabold text-xs sm:text-sm flex items-center gap-1.5 shadow-md shadow-emerald-600/25 transition cursor-pointer"
                   >
                     {isSubmitting ? (
-                      <span>{isAr ? 'جارِ الحفظ...' : 'Saving...'}</span>
+                      <span>{isAr ? 'جارِ التحقق والحفظ...' : 'Verifying & Saving...'}</span>
                     ) : (
                       <>
                         <Check size={14} />
-                        <span>{isAr ? 'تأكيد وإرسال' : 'Submit & Save'}</span>
+                        <span>{isAr ? 'تأكيد وإرسال' : 'Verify & Submit'}</span>
                       </>
                     )}
                   </button>

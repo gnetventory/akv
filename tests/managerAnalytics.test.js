@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { calculateManagerInsights } from '../src/utils/managerAnalytics';
 import { SURVEY_QUESTIONS } from '../src/utils/surveyQuestions';
 import { saveSurveyResponse, getSurveyResponses, saveCollabRequest, getCollabRequests } from '../src/utils/storage';
+import { isValidEmail, findMemberByEmail } from '../src/utils/helpers';
 
 describe('AKV Manager Business Insights & Analytics', () => {
   beforeEach(() => {
@@ -93,5 +94,26 @@ describe('AKV Manager Business Insights & Analytics', () => {
     const collabs = getCollabRequests();
     expect(collabs.length).toBe(1);
     expect(collabs[0].senderEmail).toBe('partner@test.com');
+  });
+
+  it('validates email format and verifies membership in directory', () => {
+    // Format check
+    expect(isValidEmail('valid.user@company.com')).toBe(true);
+    expect(isValidEmail('invalid-email')).toBe(false);
+    expect(isValidEmail('no-domain@')).toBe(false);
+    expect(isValidEmail('@nodomain.com')).toBe(false);
+    expect(isValidEmail('')).toBe(false);
+
+    // Directory existence check
+    const mockDirectory = [
+      { id: 'm1', name: 'Karim Founder', email: 'karim@venture.io' },
+      { id: 'm2', name: 'Nour Tech', email: 'nour@tech.co', originalText: 'Contact: nour@tech.co' },
+      { id: 'm3', name: 'Tarek Mobile', originalText: 'Reach me on tarek@mobileapp.com anytime' },
+    ];
+
+    expect(findMemberByEmail('karim@venture.io', mockDirectory)).toMatchObject({ id: 'm1' });
+    expect(findMemberByEmail('NOUR@TECH.CO', mockDirectory)).toMatchObject({ id: 'm2' });
+    expect(findMemberByEmail('tarek@mobileapp.com', mockDirectory)).toMatchObject({ id: 'm3' });
+    expect(findMemberByEmail('stranger@unknown.com', mockDirectory)).toBeNull();
   });
 });
