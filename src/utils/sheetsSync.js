@@ -136,6 +136,48 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
+    if (action === 'log_survey') {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var surveySheet = ss.getSheetByName('Surveys');
+      if (!surveySheet) {
+        surveySheet = ss.insertSheet('Surveys');
+        surveySheet.appendRow(['Timestamp', 'Email', 'Member Name', 'Category', 'Question', 'Answer', 'Language']);
+        surveySheet.getRange(1, 1, 1, 7).setFontWeight('bold').setBackground('#E0F2FE');
+      }
+      var s = payload.survey || {};
+      surveySheet.appendRow([
+        timestamp,
+        s.email || '',
+        s.memberName || '',
+        s.category || '',
+        s.questionText || '',
+        s.answerText || '',
+        s.language || 'en'
+      ]);
+      return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'Survey logged' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === 'log_collab_request') {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var collabSheet = ss.getSheetByName('Collab_Requests');
+      if (!collabSheet) {
+        collabSheet = ss.insertSheet('Collab_Requests');
+        collabSheet.appendRow(['Timestamp', 'Sender Email', 'Target Member', 'Note', 'Type']);
+        collabSheet.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#FEF3C7');
+      }
+      var c = payload.collab || {};
+      collabSheet.appendRow([
+        timestamp,
+        c.senderEmail || '',
+        c.targetMemberName || '',
+        c.note || '',
+        c.type || 'partnership'
+      ]);
+      return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'Collaboration request logged' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'Action processed' }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
