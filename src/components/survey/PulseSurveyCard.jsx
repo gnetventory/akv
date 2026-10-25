@@ -96,7 +96,7 @@ export default function PulseSurveyCard() {
       {/* Floating Trigger Pill */}
       {!isOpen && (
         <div
-          className="fixed bottom-20 lg:bottom-6 right-4 sm:right-6 z-40 animate-bounce"
+          className="fixed bottom-20 lg:bottom-6 right-4 sm:right-6 z-[1500] animate-bounce"
           style={{ animationDuration: '3s' }}
         >
           <button
@@ -121,7 +121,7 @@ export default function PulseSurveyCard() {
 
       {/* Interactive Card Popup Modal */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4 bg-stone-950/60 backdrop-blur-xs">
+        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-3 sm:p-4 bg-stone-950/60 backdrop-blur-xs">
           <div
             className="w-full max-w-md bg-white dark:bg-stone-900 rounded-3xl p-5 sm:p-6 border border-stone-200 dark:border-stone-800 shadow-2xl relative overflow-hidden transition-all"
             dir={isAr ? 'rtl' : 'ltr'}

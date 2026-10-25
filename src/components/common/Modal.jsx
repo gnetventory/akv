@@ -32,7 +32,7 @@ export default function Modal({
     }[size] || 'max-w-2xl';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all">
+    <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all">
       <div className="absolute inset-0 bg-stone-950/60 backdrop-blur-sm" onClick={onClose} />
       <div
         className={`relative w-full ${sizeClass} bg-white dark:bg-stone-900 rounded-t-3xl rounded-b-none sm:rounded-3xl shadow-2xl border-t sm:border border-stone-200/80 dark:border-stone-800 animate-slide-up max-h-[88dvh] sm:max-h-[90vh] flex flex-col overflow-hidden safe-area-bottom`}

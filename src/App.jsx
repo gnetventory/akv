@@ -39,7 +39,7 @@ export default function App() {
     <div className="min-h-screen bg-[#FAFAF7] dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex flex-col font-sans transition-colors duration-200">
       {notification && (
         <div
-          className={`fixed top-4 inset-x-4 sm:inset-x-auto sm:right-6 sm:max-w-md mx-auto sm:mx-0 z-50 px-4 py-3 rounded-2xl shadow-xl text-xs sm:text-sm font-semibold flex items-center justify-center sm:justify-start gap-2.5 animate-slide-up border ${
+          className={`fixed top-4 inset-x-4 sm:inset-x-auto sm:right-6 sm:max-w-md mx-auto sm:mx-0 z-[10000] px-4 py-3 rounded-2xl shadow-xl text-xs sm:text-sm font-semibold flex items-center justify-center sm:justify-start gap-2.5 animate-slide-up border ${
             notification.type === 'error'
               ? 'bg-rose-600 text-white border-rose-500'
               : notification.type === 'warning'
