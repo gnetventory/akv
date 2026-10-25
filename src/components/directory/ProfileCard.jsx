@@ -43,7 +43,8 @@ import Modal from '../common/Modal';
 import ScoreExplainerModal from '../common/ScoreExplainerModal';
 
 export default function ProfileCard({ member, onDeleted, onUpdated, synergyScore = null }) {
-  const { notify } = useApp();
+  const { notify, language = 'en' } = useApp();
+  const isAr = language === 'ar';
   const [showDetail, setShowDetail] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
@@ -128,49 +129,83 @@ export default function ProfileCard({ member, onDeleted, onUpdated, synergyScore
           {/* 1. Header: Avatar with gradient ring, Founder Name, Flag, and Synergy Dial */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="relative shrink-0">
+              {/* Circular SVG Avatar Ring & Tier Badge */}
+              <div className="relative shrink-0 flex items-center justify-center p-1">
+                <svg className="w-13 h-13 -rotate-90 pointer-events-none" viewBox="0 0 44 44">
+                  <circle
+                    cx="22"
+                    cy="22"
+                    r="19"
+                    fill="transparent"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    className="text-stone-200 dark:text-stone-800"
+                  />
+                  <circle
+                    cx="22"
+                    cy="22"
+                    r="19"
+                    fill="transparent"
+                    stroke={
+                      displayScore >= 95
+                        ? '#10b981'
+                        : displayScore >= 70
+                        ? '#f59e0b'
+                        : displayScore >= 55
+                        ? '#0284c7'
+                        : '#d97706'
+                    }
+                    strokeWidth="2.5"
+                    strokeDasharray="119.38"
+                    strokeDashoffset={119.38 - (119.38 * Math.min(100, Math.max(0, displayScore))) / 100}
+                    strokeLinecap="round"
+                    className="transition-all duration-700"
+                  />
+                </svg>
                 <div
-                  className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${gradient} text-white font-extrabold text-base flex items-center justify-center shadow-md ring-2 ring-emerald-100 dark:ring-stone-800`}
+                  className={`absolute inset-2 rounded-xl bg-gradient-to-br ${gradient} text-white font-extrabold text-sm flex items-center justify-center shadow-md`}
                 >
                   {initials}
                 </div>
-                {/* Status Dot */}
+                {/* Status / Tier Badge Icon */}
                 <span
-                  className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-stone-900 shadow-xs"
-                  title="Verified BGM Community Founder"
-                />
+                  className="absolute -bottom-0.5 -right-0.5 text-xs bg-white dark:bg-stone-900 rounded-full border border-stone-200 dark:border-stone-700 shadow-xs p-0.5 leading-none"
+                  title={`Profile Strength: ${profileStrength.tier?.name || 'Bronze'} (${displayScore}%)`}
+                >
+                  {profileStrength.tier?.icon || '🥉'}
+                </span>
               </div>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  {english ? (
-                    <h3 className="font-extrabold text-sm sm:text-base text-stone-900 dark:text-stone-100 truncate tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                      {english}
-                    </h3>
-                  ) : (
-                    <h3
-                      className="font-extrabold text-sm sm:text-base text-stone-900 dark:text-stone-100 truncate tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"
-                      dir="rtl"
-                    >
-                      {arabic || primary}
-                    </h3>
-                  )}
+                  <h3
+                    className="font-extrabold text-sm sm:text-base text-stone-900 dark:text-stone-100 truncate tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"
+                    dir={isAr ? 'rtl' : 'ltr'}
+                  >
+                    {isAr ? (arabic || primary || english) : (english || primary || arabic)}
+                  </h3>
                   {flag && <span className="text-xs shrink-0" title={member.location?.country}>{flag}</span>}
                   {isNew && (
                     <span className="text-[9.5px] font-black uppercase px-1.5 py-0.2 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 shrink-0">
-                      ✨ New
+                      {isAr ? 'جديد ✨' : '✨ New'}
                     </span>
                   )}
                 </div>
 
-                {english && arabic && (
-                  <p className="text-[11px] font-bold text-stone-600 dark:text-stone-400 truncate" dir="rtl">
-                    {arabic}
-                  </p>
-                )}
+                {isAr
+                  ? english && english !== arabic && (
+                      <p className="text-[11px] font-bold text-stone-600 dark:text-stone-400 truncate" dir="ltr">
+                        {english}
+                      </p>
+                    )
+                  : arabic && arabic !== english && (
+                      <p className="text-[11px] font-bold text-stone-600 dark:text-stone-400 truncate" dir="rtl">
+                        {arabic}
+                      </p>
+                    )}
 
                 <p className="text-xs font-semibold text-stone-500 dark:text-stone-400 truncate mt-0.5">
-                  {member.role || 'Venture Founder'}
+                  {member.role || (isAr ? 'مؤسس مشروع' : 'Founder')}
                 </p>
               </div>
             </div>
@@ -185,17 +220,17 @@ export default function ProfileCard({ member, onDeleted, onUpdated, synergyScore
                       ? 'text-amber-500 bg-amber-50 dark:bg-amber-950/40'
                       : 'text-stone-300 hover:text-amber-500 hover:bg-stone-100 dark:hover:bg-stone-800'
                   }`}
-                  title={bookmarked ? 'Saved in Watchlist' : 'Add to Watchlist'}
+                  title={bookmarked ? (isAr ? 'محفوظ في قائمتك' : 'Saved in Watchlist') : (isAr ? 'حفظ في قائمتك' : 'Save for Later')}
                 >
                   <Star size={14} className={bookmarked ? 'fill-amber-500' : ''} />
                 </button>
 
                 <div
                   className="flex items-center gap-1 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/70 dark:to-teal-950/70 px-2 py-0.5 rounded-xl border border-emerald-200/80 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 shadow-2xs"
-                  title="Profile Readiness & Ecosystem Synergy Score"
+                  title={isAr ? `قوة الملف الشخصي: ${displayScore}%` : `Profile Strength: ${displayScore}%`}
                 >
                   <span className="text-[11px] font-mono font-bold">{displayScore}%</span>
-                  <span className="text-[9px] font-mono uppercase text-emerald-600 font-bold hidden sm:inline">Score</span>
+                  <span className="text-[9px] font-mono uppercase text-emerald-600 font-bold hidden sm:inline">{isAr ? 'القوة' : 'Score'}</span>
                 </div>
               </div>
 
@@ -212,17 +247,17 @@ export default function ProfileCard({ member, onDeleted, onUpdated, synergyScore
             {/* Venture Tile */}
             <div className="p-2.5 rounded-2xl bg-stone-50/80 dark:bg-stone-850 border border-stone-200/70 dark:border-stone-800 flex flex-col justify-between">
               <span className="text-[9.5px] font-mono font-bold uppercase tracking-wider text-stone-400 block mb-0.5">
-                VENTURE
+                {isAr ? 'المشروع' : 'BUSINESS'}
               </span>
               <span className="font-semibold text-stone-800 dark:text-stone-200 text-[11.5px] line-clamp-2 leading-snug">
-                {member.business || 'Venture & Strategic Initiative'}
+                {member.business || (isAr ? 'مشروع استراتيجي' : 'Active Venture')}
               </span>
             </div>
 
             {/* Stage Tile */}
             <div className="p-2.5 rounded-2xl bg-stone-50/80 dark:bg-stone-850 border border-stone-200/70 dark:border-stone-800 flex flex-col justify-between">
               <span className="text-[9.5px] font-mono font-bold uppercase tracking-wider text-stone-400 block mb-0.5">
-                STAGE
+                {isAr ? 'المرحلة' : 'STAGE'}
               </span>
               <div className="flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -238,7 +273,7 @@ export default function ProfileCard({ member, onDeleted, onUpdated, synergyScore
             {seekingItems.length > 0 && (
               <div className="bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 rounded-2xl p-2.5 text-xs">
                 <div className="flex items-center gap-1 text-[10px] font-mono font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400 mb-0.5">
-                  <span>🎯</span> <span>LOOKING FOR:</span>
+                  <span>🎯</span> <span>{isAr ? 'يبحث عن:' : 'LOOKING FOR:'}</span>
                 </div>
                 <p className="text-amber-950 dark:text-amber-200 text-[11.5px] font-medium line-clamp-2 leading-relaxed">
                   {seekingItems.join(' · ')}
@@ -249,7 +284,7 @@ export default function ProfileCard({ member, onDeleted, onUpdated, synergyScore
             {offeringItems.length > 0 && (
               <div className="bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 rounded-2xl p-2.5 text-xs">
                 <div className="flex items-center gap-1 text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400 mb-0.5">
-                  <span>💡</span> <span>CAN HELP WITH:</span>
+                  <span>💡</span> <span>{isAr ? 'يمكن المساعدة في:' : 'CAN HELP WITH:'}</span>
                 </div>
                 <p className="text-emerald-950 dark:text-emerald-200 text-[11.5px] font-medium line-clamp-2 leading-relaxed">
                   {offeringItems.join(' · ')}

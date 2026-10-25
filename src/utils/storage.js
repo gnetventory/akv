@@ -497,3 +497,86 @@ export function saveExchangePosts(posts) {
   }
   return safe;
 }
+
+// ─── Survey Responses Storage ────────────────────────────────────────────────
+export function getSurveyResponses() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.SURVEY_RESPONSES);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveSurveyResponse(response) {
+  if (!response) return [];
+  const current = getSurveyResponses();
+  const updated = [
+    {
+      id: response.id || generateId('survey'),
+      ...response,
+      createdAt: response.createdAt || new Date().toISOString(),
+    },
+    ...current,
+  ];
+  try {
+    localStorage.setItem(STORAGE_KEYS.SURVEY_RESPONSES, JSON.stringify(updated));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('akv_survey_updated', { detail: updated }));
+    }
+  } catch {
+    // ignore
+  }
+  return updated;
+}
+
+// ─── Quick Match Bookmarks & Internal Requests ───────────────────────────────
+export function getQuickMatchBookmarks() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.QUICK_MATCH_BOOKMARKS);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveQuickMatchBookmark(memberId) {
+  const current = getQuickMatchBookmarks();
+  if (current.includes(memberId)) return current;
+  const updated = [...current, memberId];
+  try {
+    localStorage.setItem(STORAGE_KEYS.QUICK_MATCH_BOOKMARKS, JSON.stringify(updated));
+  } catch {
+    // ignore
+  }
+  return updated;
+}
+
+export function getCollabRequests() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.COLLAB_REQUESTS);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveCollabRequest(request) {
+  const current = getCollabRequests();
+  const updated = [
+    {
+      id: generateId('collab'),
+      ...request,
+      createdAt: new Date().toISOString(),
+    },
+    ...current,
+  ];
+  try {
+    localStorage.setItem(STORAGE_KEYS.COLLAB_REQUESTS, JSON.stringify(updated));
+  } catch {
+    // ignore
+  }
+  return updated;
+}

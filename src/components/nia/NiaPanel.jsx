@@ -28,6 +28,7 @@ import {
   Clock,
   LayoutDashboard,
   Users,
+  TrendingUp,
   Share2,
   Search,
 } from 'lucide-react';
@@ -67,6 +68,7 @@ import AIMatchmaker from '../matchmaker/AIMatchmaker';
 import NiaAddMember from './NiaAddMember';
 import DuplicateComparisonModal from './DuplicateComparisonModal';
 import CommunityWelcomeDispatcherModal from '../admin/CommunityWelcomeDispatcherModal';
+import ManagerDashboard from '../manager/ManagerDashboard';
 
 export default function NiaPanel({ onLock, activeTab: externalTab, setActiveTab: setExternalTab }) {
   const { apiKey, updateApiKey, members, refreshMembers, notify, isSheetsSyncing } = useApp();
@@ -604,6 +606,19 @@ export default function NiaPanel({ onLock, activeTab: externalTab, setActiveTab:
 
         <button
           type="button"
+          onClick={() => setActiveTab('insights')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'insights'
+              ? 'bg-emerald-600 text-white shadow-tactile-sm'
+              : 'bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 border border-stone-200 dark:border-stone-800'
+          }`}
+        >
+          <TrendingUp size={15} />
+          <span>Business Insights & Pulse</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveTab('members')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'members'
@@ -652,6 +667,13 @@ export default function NiaPanel({ onLock, activeTab: externalTab, setActiveTab:
           <span>Security & System</span>
         </button>
       </div>
+
+      {/* ── TAB: Business Insights & Community Pulse ──────────────────────── */}
+      {activeTab === 'insights' && (
+        <div className="animate-fade-in">
+          <ManagerDashboard />
+        </div>
+      )}
 
       {/* ── TAB 1: Overview & 2-Way Sync ──────────────────────────────────────── */}
       {activeTab === 'overview' && (

@@ -12,7 +12,9 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import Modal from '../common/Modal';
-import { getNiaPhone } from '../../utils/storage';
+import { saveCollabRequest } from '../../utils/storage';
+import { pushCollabToSheets } from '../../utils/sheetsSync';
+import { useApp } from '../../contexts/AppContext';
 
 const COMMON_BLOCKERS = [
   'Growth Ceiling (وصلت لحد معين ومش عارف أكبر أكتر من كده)',
@@ -32,46 +34,47 @@ const VENTURE_STAGES = [
 ];
 
 export default function GrowthDiagnosticModal({ isOpen, onClose, defaultMember = null }) {
+  const { notify } = useApp();
   const [founderName, setFounderName] = useState(defaultMember?.name || '');
   const [businessName, setBusinessName] = useState(defaultMember?.business || '');
   const [stage, setStage] = useState('hit_ceiling');
   const [selectedBlocker, setSelectedBlocker] = useState(COMMON_BLOCKERS[0]);
   const [customDetails, setCustomDetails] = useState('');
   const [preferredFormat, setPreferredFormat] = useState('1on1_deep_dive');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const niaPhone = getNiaPhone();
-
-  // Generate intelligent Arabic/English pre-filled diagnostic message
-  const buildWhatsAppMessage = () => {
+  // Generate intelligent diagnostic summary
+  const buildDiagnosticMessage = () => {
     const stageObj = VENTURE_STAGES.find((s) => s.id === stage);
     const stageLabel = stageObj ? stageObj.label.split('(')[0].trim() : 'Working Business';
 
-    let msg = `أهلاً نيا! 👋\n\n`;
-    msg += `أنا ${founderName.trim() || 'أحد أعضاء مجتمع BGM'}`;
-    if (businessName.trim()) {
-      msg += `، مؤسس "${businessName.trim()}"`;
-    }
-    msg += `.\n\n`;
-    msg += `🎯 مرحلة البيزنس: ${stageLabel}\n`;
-    msg += `⚠️ الـ Block أو العائق الرئيسي اللي معطل النمو عندي حالياً:\n`;
-    msg += `• ${selectedBlocker}\n`;
-
-    if (customDetails.trim()) {
-      msg += `\nتفاصيل إضافية عن المشكلة:\n"${customDetails.trim()}"\n`;
-    }
-
-    msg += `\n💡 حابب نقعد سوا في Growth Diagnostic Session نشخص الـ Gaps في البيزنس ونبني استراتيجية واضحة نفك بيها الـ Bottleneck ده. 🚀`;
-
+    let msg = `Founder: ${founderName.trim() || 'Community Member'}\n`;
+    if (businessName.trim()) msg += `Venture: "${businessName.trim()}"\n`;
+    msg += `Stage: ${stageLabel}\n`;
+    msg += `Main Blocker: ${selectedBlocker}\n`;
+    if (customDetails.trim()) msg += `Details: "${customDetails.trim()}"\n`;
     return msg;
   };
 
-  const handleLaunchWhatsApp = (e) => {
+  const handleSubmitDiagnostic = async (e) => {
     e.preventDefault();
-    const message = buildWhatsAppMessage();
-    const encoded = encodeURIComponent(message);
-    const cleanPhone = niaPhone.replace(/[^0-9]/g, '');
-    const url = `https://wa.me/${cleanPhone}?text=${encoded}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+    setIsSubmitting(true);
+    const summary = buildDiagnosticMessage();
+    const payload = {
+      founderName,
+      businessName,
+      stage,
+      selectedBlocker,
+      customDetails,
+      preferredFormat,
+      note: summary,
+      type: 'growth_diagnostic',
+      createdAt: new Date().toISOString(),
+    };
+    saveCollabRequest(payload);
+    await pushCollabToSheets(payload);
+    setIsSubmitting(false);
+    notify('🚀 Diagnostic request submitted on AKV! We will review your bottleneck.');
     onClose();
   };
 
@@ -82,7 +85,7 @@ export default function GrowthDiagnosticModal({ isOpen, onClose, defaultMember =
       title="1-on-1 Growth Gap Diagnostic with Nia"
       size="lg"
     >
-      <form onSubmit={handleLaunchWhatsApp} className="space-y-5 text-stone-800 dark:text-stone-200">
+      <form onSubmit={handleSubmitDiagnostic} className="space-y-5 text-stone-800 dark:text-stone-200">
         {/* Nia Vision Banner */}
         <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent border border-emerald-500/25 space-y-2">
           <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold text-xs sm:text-sm">
@@ -186,11 +189,11 @@ export default function GrowthDiagnosticModal({ isOpen, onClose, defaultMember =
         {/* Preview Message */}
         <div className="p-3 bg-stone-50 dark:bg-stone-850 rounded-xl border border-stone-200 dark:border-stone-750 space-y-1">
           <div className="text-[11px] font-bold text-stone-500 dark:text-stone-400 flex items-center gap-1">
-            <MessageCircle size={13} className="text-emerald-600" />
-            <span>WhatsApp Diagnostic Request Preview:</span>
+            <Sparkles size={13} className="text-emerald-600" />
+            <span>Diagnostic Request Summary:</span>
           </div>
           <p className="text-[11px] font-mono whitespace-pre-line text-stone-700 dark:text-stone-300 line-clamp-3">
-            {buildWhatsAppMessage()}
+            {buildDiagnosticMessage()}
           </p>
         </div>
 
@@ -205,10 +208,11 @@ export default function GrowthDiagnosticModal({ isOpen, onClose, defaultMember =
           </button>
           <button
             type="submit"
+            disabled={isSubmitting}
             className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-emerald-600/25 transition cursor-pointer hover:scale-102"
           >
             <Send size={15} />
-            <span>Send Diagnostic Request via WhatsApp</span>
+            <span>{isSubmitting ? 'Submitting...' : 'Submit Diagnostic Request'}</span>
           </button>
         </div>
       </form>

@@ -8,6 +8,8 @@ import WorldMapView from './components/map/WorldMapView';
 import CommunityDashboard from './components/dashboard/CommunityDashboard';
 import FounderProblemBoard from './components/exchange/FounderProblemBoard';
 import GrowthDiagnosticModal from './components/dashboard/GrowthDiagnosticModal';
+import QuickMatchDeck from './components/deck/QuickMatchDeck';
+import PulseSurveyCard from './components/survey/PulseSurveyCard';
 import { useApp } from './contexts/AppContext';
 
 export default function App() {
@@ -20,6 +22,8 @@ export default function App() {
         return <CommunityDashboard onOpenDiagnostic={() => setShowGlobalDiagnostic(true)} />;
       case 'directory':
         return <Directory />;
+      case 'quickmatch':
+        return <QuickMatchDeck />;
       case 'exchange':
         return <FounderProblemBoard onOpenDiagnostic={() => setShowGlobalDiagnostic(true)} />;
       case 'radar':
@@ -52,6 +56,7 @@ export default function App() {
         <main className="flex-1 min-w-0 py-4 sm:py-8 pb-24 lg:pb-8">{renderTabContent()}</main>
       </div>
       <BottomNav />
+      <PulseSurveyCard />
       {showGlobalDiagnostic && (
         <GrowthDiagnosticModal
           isOpen={showGlobalDiagnostic}

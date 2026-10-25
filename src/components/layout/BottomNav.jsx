@@ -1,17 +1,18 @@
 import React from 'react';
-import { BarChart3, Users, Radio, Globe, HelpCircle } from 'lucide-react';
+import { BarChart3, Users, Radio, Globe, HelpCircle, Sparkles } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 
 const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Snapshot', icon: BarChart3 },
-  { id: 'directory', label: 'Directory', icon: Users, showBadge: true },
-  { id: 'exchange', label: 'Problems', icon: HelpCircle },
-  { id: 'radar', label: 'Radar', icon: Radio },
-  { id: 'map', label: 'Atlas', icon: Globe },
+  { id: 'dashboard', label: 'Snapshot', labelAr: 'نظرة', icon: BarChart3 },
+  { id: 'directory', label: 'Directory', labelAr: 'الدليل', icon: Users, showBadge: true },
+  { id: 'quickmatch', label: 'Matches', labelAr: 'ترشيحات', icon: Sparkles },
+  { id: 'exchange', label: 'Problems', labelAr: 'تحديات', icon: HelpCircle },
+  { id: 'radar', label: 'Radar', labelAr: 'توافق', icon: Radio },
+  { id: 'map', label: 'Atlas', labelAr: 'خريطة', icon: Globe },
 ];
 
 export default function BottomNav() {
-  const { activeTab, setActiveTab, activeMembers: members } = useApp();
+  const { activeTab, setActiveTab, language = 'en', activeMembers: members } = useApp();
 
   return (
     <nav
@@ -57,8 +58,8 @@ export default function BottomNav() {
                 )}
               </div>
 
-              <span className="text-[10.5px] mt-1 tracking-tight leading-none">
-                {item.label}
+              <span className="text-[10px] mt-1 tracking-tight leading-none">
+                {language === 'ar' ? (item.labelAr || item.label) : item.label}
               </span>
             </button>
           );

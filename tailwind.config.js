@@ -5,8 +5,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans:    ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-        display: ['Outfit', 'system-ui', 'sans-serif'],
+        sans:    ['"Plus Jakarta Sans"', '"Readex Pro"', 'system-ui', 'sans-serif'],
+        arabic:  ['"Readex Pro"', 'Cairo', 'system-ui', 'sans-serif'],
+        display: ['Outfit', '"Readex Pro"', 'system-ui', 'sans-serif'],
         serif:   ['Fraunces', 'Georgia', 'serif'],
         mono:    ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },

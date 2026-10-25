@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Sun, Moon, ExternalLink, KeyRound, Loader2, Eye, EyeOff, FileSpreadsheet, Users, Sparkles } from 'lucide-react';
+import { Shield, Sun, Moon, ExternalLink, KeyRound, Loader2, Eye, EyeOff, FileSpreadsheet, Users, Sparkles, TrendingUp } from 'lucide-react';
 import { AppProvider } from './contexts/AppContext';
 import NiaPanel from './components/nia/NiaPanel';
 import { grantNiaSession, isNiaSession, revokeNiaSession } from './utils/session';
@@ -436,7 +436,7 @@ export default function NiaApp() {
             aria-label="Admin Navigation Dock"
             className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-t border-stone-200 dark:border-stone-800 pb-[env(safe-area-inset-bottom,0px)] shadow-lg"
           >
-            <div className="grid grid-cols-4 h-16 max-w-lg mx-auto px-1 sm:px-2">
+            <div className="grid grid-cols-5 h-16 max-w-lg mx-auto px-1 sm:px-2">
               <button
                 type="button"
                 onClick={() => {
@@ -451,6 +451,22 @@ export default function NiaApp() {
               >
                 <FileSpreadsheet size={18} />
                 <span className="text-[10px] tracking-tight">Overview</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setAdminTab('insights');
+                  navigator.vibrate?.([10]);
+                }}
+                className={`flex flex-col items-center justify-center gap-1 transition-all cursor-pointer py-1 ${
+                  adminTab === 'insights'
+                    ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+                    : 'text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
+                }`}
+              >
+                <TrendingUp size={18} />
+                <span className="text-[10px] tracking-tight">Insights</span>
               </button>
 
               <button

@@ -29,6 +29,13 @@ export function AppProvider({ children }) {
   // ── UI layer ─────────────────────────────────────────────────────────────
   const [activeTab, setActiveTab] = useState('dashboard');
   const [darkMode, setDarkMode] = useState(getDarkMode);
+  const [language, setLanguageState] = useState(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.LANGUAGE) || 'en';
+    } catch {
+      return 'en';
+    }
+  });
   const [apiKey, setApiKeyState] = useState(getAPIKey);
   const [mapConfig, setMapConfigState] = useState(getMapConfig);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -56,6 +63,8 @@ export function AppProvider({ children }) {
   // Initialize on mount & Fetch remote members from Google Sheets API
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
     if (apiKey) initGemini(apiKey);
 
     // Initial load from storage & background sync from disk
@@ -109,6 +118,32 @@ export function AppProvider({ children }) {
   }, []);
 
   // ── UI actions ─────────────────────────────────────────────────────────
+  const toggleLanguage = useCallback(() => {
+    setLanguageState((prev) => {
+      const next = prev === 'ar' ? 'en' : 'ar';
+      try {
+        localStorage.setItem(STORAGE_KEYS.LANGUAGE, next);
+      } catch {
+        // ignore
+      }
+      document.documentElement.lang = next;
+      document.documentElement.dir = next === 'ar' ? 'rtl' : 'ltr';
+      return next;
+    });
+  }, []);
+
+  const setLanguage = useCallback((lang) => {
+    const safeLang = lang === 'ar' ? 'ar' : 'en';
+    setLanguageState(safeLang);
+    try {
+      localStorage.setItem(STORAGE_KEYS.LANGUAGE, safeLang);
+    } catch {
+      // ignore
+    }
+    document.documentElement.lang = safeLang;
+    document.documentElement.dir = safeLang === 'ar' ? 'rtl' : 'ltr';
+  }, []);
+
   const toggleDarkMode = useCallback(() => {
     setDarkMode((prev) => {
       const next = !prev;
@@ -152,6 +187,9 @@ export function AppProvider({ children }) {
       setActiveTab,
       darkMode,
       toggleDarkMode,
+      language,
+      toggleLanguage,
+      setLanguage,
       apiKey,
       updateApiKey,
       mapConfig,
@@ -166,6 +204,9 @@ export function AppProvider({ children }) {
       activeTab,
       darkMode,
       toggleDarkMode,
+      language,
+      toggleLanguage,
+      setLanguage,
       apiKey,
       updateApiKey,
       mapConfig,

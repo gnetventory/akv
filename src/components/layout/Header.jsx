@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Moon, Sun, Menu, X, Info, ShieldCheck, HeartHandshake, HelpCircle } from 'lucide-react';
+import { Moon, Sun, Menu, X, Info, ShieldCheck, HeartHandshake, HelpCircle, Languages } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 import Modal from '../common/Modal';
 
 export default function Header() {
-  const { darkMode, toggleDarkMode, activeMembers: members, sidebarOpen, setSidebarOpen } = useApp();
+  const { darkMode, toggleDarkMode, language, toggleLanguage, activeMembers: members, sidebarOpen, setSidebarOpen } = useApp();
   const [showAboutModal, setShowAboutModal] = useState(false);
 
   return (
@@ -67,6 +67,17 @@ export default function Header() {
           >
             <Info size={14} className="text-emerald-600 dark:text-emerald-400" />
             <span className="hidden md:inline">About</span>
+          </button>
+
+          {/* Language toggle */}
+          <button
+            onClick={toggleLanguage}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-xs font-bold text-stone-700 dark:text-stone-300 hover:border-emerald-500 transition-all cursor-pointer shadow-xs min-h-[40px] shrink-0"
+            title={language === 'ar' ? 'Switch to English' : 'التحويل للغة العربية'}
+            aria-label="Toggle Language"
+          >
+            <Languages size={15} className="text-emerald-600 dark:text-emerald-400" />
+            <span className="font-semibold">{language === 'ar' ? 'English' : 'العربية'}</span>
           </button>
 
           {/* Dark mode toggle */}

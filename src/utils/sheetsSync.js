@@ -719,3 +719,49 @@ export async function rejectMember(member, reason = 'Rejected by Admin') {
     console.warn('Failed to push rejection to Google Sheets:', err);
   }
 }
+
+/**
+ * ─── Push Survey Response to Google Sheets ─────────────────────────────────────
+ */
+export async function pushSurveyToSheets(surveyData) {
+  const config = getSheetsConfig();
+  if (!config.apiUrl || !config.apiUrl.trim()) return false;
+  try {
+    await fetch(config.apiUrl.trim(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'log_survey',
+        survey: surveyData,
+        timestamp: new Date().toISOString(),
+      }),
+    });
+    return true;
+  } catch (err) {
+    console.warn('Failed to push survey response to Google Sheets:', err);
+    return false;
+  }
+}
+
+/**
+ * ─── Push Internal Collaboration Request to Google Sheets ──────────────────────
+ */
+export async function pushCollabToSheets(collabData) {
+  const config = getSheetsConfig();
+  if (!config.apiUrl || !config.apiUrl.trim()) return false;
+  try {
+    await fetch(config.apiUrl.trim(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'log_collab_request',
+        collab: collabData,
+        timestamp: new Date().toISOString(),
+      }),
+    });
+    return true;
+  } catch (err) {
+    console.warn('Failed to push collab request to Google Sheets:', err);
+    return false;
+  }
+}

@@ -15,7 +15,7 @@ const ICONS = {
 };
 
 export default function Sidebar() {
-  const { activeTab, setActiveTab, activeMembers: members, sidebarOpen, setSidebarOpen } = useApp();
+  const { activeTab, setActiveTab, language = 'en', activeMembers: members, sidebarOpen, setSidebarOpen } = useApp();
 
   const handleNav = (tabId) => {
     setActiveTab(tabId);
@@ -77,7 +77,9 @@ export default function Sidebar() {
                 )}
 
                 <div className="flex-1 min-w-0">
-                  <span className="text-[14px] font-medium leading-none tracking-tight">{tab.label}</span>
+                  <span className="text-[14px] font-medium leading-none tracking-tight">
+                    {language === 'ar' ? (tab.labelAr || tab.label) : tab.label}
+                  </span>
                 </div>
 
                 {/* Member count badge on Directory tab */}

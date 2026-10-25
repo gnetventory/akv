@@ -115,6 +115,10 @@ export const STORAGE_KEYS = {
   NIA_EMAIL: 'sed_nia_email',
   ADMIN_EMAIL: 'sed_admin_email',
   NIA_PHONE: 'sed_nia_phone',
+  SURVEY_RESPONSES: 'akv_survey_responses',
+  LANGUAGE: 'akv_language',
+  QUICK_MATCH_BOOKMARKS: 'akv_quick_match_bookmarks',
+  COLLAB_REQUESTS: 'akv_collab_requests',
 };
 
 // ─── Default Nia Contact Config (Customizable in admin / localStorage) ─────────
@@ -172,25 +176,42 @@ export const NAV_TABS = [
   {
     id: 'dashboard',
     label: 'Community Snapshot',
+    labelAr: 'نظرة عامة',
     icon: 'BarChart3',
     description: 'Overview of members, community needs & gaps',
   },
-  { id: 'directory', label: 'Directory', icon: 'Users', description: 'Browse all founders & ventures' },
+  {
+    id: 'directory',
+    label: 'Directory',
+    labelAr: 'دليل الأعضاء',
+    icon: 'Users',
+    description: 'Browse all founders & ventures',
+  },
+  {
+    id: 'quickmatch',
+    label: 'Quick Matches',
+    labelAr: 'ترشيحات سريعة',
+    icon: 'Sparkles',
+    description: "Today's daily deck of 5 complementary founder matches",
+  },
   {
     id: 'exchange',
     label: 'Problem Board',
+    labelAr: 'تبادل التحديات',
     icon: 'HelpCircle',
     description: 'Founder block exchange: share problems & get peer solutions',
   },
   {
     id: 'radar',
     label: 'Find Your Match',
+    labelAr: 'توافق الشراكات',
     icon: 'Radio',
     description: 'Complementary founder synergies & pairings',
   },
   {
     id: 'map',
     label: 'Alliance Atlas',
+    labelAr: 'خريطة المجتمع',
     icon: 'Globe',
     description: 'Egypt, Gulf & Regional founder distribution',
   },
