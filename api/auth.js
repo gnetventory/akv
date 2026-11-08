@@ -13,8 +13,13 @@ function saltedHash(str) {
 
 export default async function handler(req, res) {
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers?.origin || '*';
+  if (origin !== '*') {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -68,14 +73,12 @@ export default async function handler(req, res) {
     }
 
     // 2. Priority 2: Persistent database file (data/directory_db.json)
-    const dbTarget = dbData?.niaPIN || dbData?.adminPIN || '';
-    const masterTarget = '0568510e983947061ab03d780ad117058058af692fea26606e03d102f62f34f4';
-    if (!isMatch) {
+    const dbTarget = String(dbData?.niaPIN || dbData?.adminPIN || '').trim();
+    if (!isMatch && dbTarget) {
       if (
-        submittedPlain === 'x~=iXW7H)2RZLzU(k<M^y.' ||
-        submittedSaltedSha === masterTarget ||
-        submittedRawSha === masterTarget ||
-        (dbTarget && (submittedPlain === dbTarget || submittedRawSha === dbTarget || submittedSaltedSha === dbTarget))
+        submittedPlain === dbTarget ||
+        submittedRawSha === dbTarget ||
+        submittedSaltedSha === dbTarget
       ) {
         isMatch = true;
       }

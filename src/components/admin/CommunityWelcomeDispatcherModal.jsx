@@ -130,7 +130,9 @@ export default function CommunityWelcomeDispatcherModal({ isOpen, onClose, membe
     const escaped = text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
     return escaped
       .replace(/\*(.*?)\*/g, '<strong class="font-extrabold text-stone-950 dark:text-white">$1</strong>')
       .replace(/_(.*?)_/g, '<em class="italic text-stone-700 dark:text-stone-300">$1</em>')

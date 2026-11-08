@@ -5,6 +5,8 @@ import {
   syncFromGoogleSheets,
   pushMemberDeleteToSheets,
   pushMemberUpdateToSheets,
+  pushSurveyToSheets,
+  pushCollabToSheets,
 } from '../src/utils/sheetsSync';
 import {
   getMembers,
@@ -175,5 +177,47 @@ describe('sheetsSync.js unit tests', () => {
     expect(capturedPayload.action).toBe('update');
     expect(capturedPayload.member.role).toBe('Lead Architect');
     expect(capturedPayload.audit.notes).toContain('Edited in Web App');
+  });
+
+  it('pushSurveyToSheets sends log_survey action to Google Apps Script', async () => {
+    let capturedPayload = null;
+    global.fetch = vi.fn().mockImplementation((url, options) => {
+      capturedPayload = JSON.parse(options.body);
+      return Promise.resolve({ ok: true });
+    });
+
+    const survey = {
+      email: 'founder@example.com',
+      memberName: 'Sherif',
+      category: 'bottleneck',
+      questionText: 'What is your biggest blocker?',
+      answerText: 'Hiring senior engineers',
+      language: 'en',
+    };
+    const res = await pushSurveyToSheets(survey);
+    expect(res).toBe(true);
+    expect(capturedPayload).not.toBeNull();
+    expect(capturedPayload.action).toBe('log_survey');
+    expect(capturedPayload.survey.email).toBe('founder@example.com');
+  });
+
+  it('pushCollabToSheets sends log_collab_request action to Google Apps Script', async () => {
+    let capturedPayload = null;
+    global.fetch = vi.fn().mockImplementation((url, options) => {
+      capturedPayload = JSON.parse(options.body);
+      return Promise.resolve({ ok: true });
+    });
+
+    const collab = {
+      senderEmail: 'initiator@example.com',
+      targetMemberName: 'Target Founder',
+      note: 'Let us partner on logistics',
+      type: 'partnership',
+    };
+    const res = await pushCollabToSheets(collab);
+    expect(res).toBe(true);
+    expect(capturedPayload).not.toBeNull();
+    expect(capturedPayload.action).toBe('log_collab_request');
+    expect(capturedPayload.collab.targetMemberName).toBe('Target Founder');
   });
 });

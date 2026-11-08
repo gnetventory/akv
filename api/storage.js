@@ -3,8 +3,13 @@ import path from 'path';
 
 export default async function handler(req, res) {
   // Enable CORS for mobile and cross-origin clients
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers?.origin || '*';
+  if (origin !== '*') {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -22,7 +27,11 @@ export default async function handler(req, res) {
       if (fs.existsSync(dbPath)) {
         const content = fs.readFileSync(dbPath, 'utf8');
         const data = JSON.parse(content);
-        return res.status(200).json(data);
+        const sanitized = { ...data };
+        delete sanitized.adminPIN;
+        delete sanitized.niaPIN;
+        delete sanitized.apiKey;
+        return res.status(200).json(sanitized);
       }
       return res.status(200).json({});
     } catch (err) {
